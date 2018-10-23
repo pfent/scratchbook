@@ -16,11 +16,11 @@ public:
     using iterator = Child *;
     using const_iterator = Child const *;
 
-    auto begin() const -> Child const * {
+    auto begin() const noexcept -> Child const * {
         return childs.begin();
     }
 
-    auto end() const -> Child const * {
+    auto end() const noexcept -> Child const * {
         return &childs[numChilds];
     }
 

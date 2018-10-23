@@ -8,6 +8,7 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 #include <range/v3/algorithm.hpp>
+#include <gtest/gtest.h>
 
 int main() {
     auto test = Node4<void *>();
@@ -24,7 +25,8 @@ int main() {
 
     fmt::print("{}", buffer.GetString());
 
-    ranges::all_of(test, [](auto &a) { return a == nullptr; });
+    auto res = ranges::all_of(test, [](auto &a) noexcept { return a == nullptr; });
+    assert(res);
 
     return 0;
 }
