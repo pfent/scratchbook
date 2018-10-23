@@ -14,11 +14,11 @@ int main() {
     test.find(std::byte(128));
     fmt::print("Hello {}!", "world");
 
-    rapidjson::Document d;
+    auto d = rapidjson::Document(nullptr, 1024, nullptr);
     d.Parse(R"({"project":"rapidjson","stars":10})");
 
-    rapidjson::StringBuffer buffer;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    auto buffer = rapidjson::StringBuffer(nullptr);
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer, nullptr);
     d.Accept(writer);
 
     fmt::print("{}", buffer.GetString());
