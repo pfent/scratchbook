@@ -7,6 +7,7 @@
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
+#include <range/v3/algorithm.hpp>
 
 int main() {
     auto test = Node4<void *>();
@@ -22,6 +23,8 @@ int main() {
     d.Accept(writer);
 
     fmt::print("{}", buffer.GetString());
+
+    ranges::all_of(test, [](auto &a) { return a == nullptr; });
 
     return 0;
 }
