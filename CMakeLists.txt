@@ -11,11 +11,12 @@ endif ()
 
 project(scratchbook)
 
-set(CMAKE_CXX_STANDARD 17)
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
         "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(warnings)
+include(dlGtest)
 
 add_executable(scratchbook main.cpp art/Art.h art/Node4.h art/Node16.h art/Node48.h)
 target_compile_options(scratchbook PRIVATE ${PEDANTIC_COMPILE_FLAGS})
+target_compile_features(scratchbook PUBLIC cxx_std_17)
+set_property(TARGET scratchbook PROPERTY CXX_EXTENSIONS OFF)
