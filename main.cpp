@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <gsl/gsl>
 #include "art/Art.h"
 #include "art/Node4.h"
 
@@ -9,5 +10,6 @@ int main() {
     auto test = Node4<void *>();
 
     test.find(std::byte(128));
+
     return 0;
 }

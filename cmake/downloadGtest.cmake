@@ -1,9 +1,8 @@
-# Downloads and unpacks googletest at configure time.  Based on the instructions
-# at https://github.com/google/googletest/tree/master/googletest#incorporating-into-an-existing-cmake-project
+# based on https://github.com/abseil/abseil-cpp
 
 # Download the latest googletest from Github master
 configure_file(
-        ${CMAKE_CURRENT_LIST_DIR}/extProjectGtest.txt.in
+        ${CMAKE_CURRENT_LIST_DIR}/externalProjectGtest.txt.in
         googletest-download/CMakeLists.txt
 )
 

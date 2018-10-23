@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-
 # Set the default CMAKE_BUILD_TYPE to Release.
 # This should be done before the project command since the latter can set
 # CMAKE_BUILD_TYPE itself (it does so for nmake).
@@ -14,9 +13,12 @@ project(scratchbook)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
         "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(warnings)
-include(dlGtest)
+include(downloadGtest)
+include(downloadGSL)
 
 add_executable(scratchbook main.cpp art/Art.h art/Node4.h art/Node16.h art/Node48.h)
 target_compile_options(scratchbook PRIVATE ${PEDANTIC_COMPILE_FLAGS})
 target_compile_features(scratchbook PUBLIC cxx_std_17)
 set_property(TARGET scratchbook PROPERTY CXX_EXTENSIONS OFF)
+target_link_libraries(scratchbook GSL)
+target_link_libraries(scratchbook gtest)
