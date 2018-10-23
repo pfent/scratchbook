@@ -4,7 +4,7 @@ configure_file(
         GSL-download/CMakeLists.txt
 )
 
-# Configure and build the downloaded googletest source
+# Configure and build the downloaded GSL source
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
         RESULT_VARIABLE result
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/GSL-download )

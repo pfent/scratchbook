@@ -3,13 +3,13 @@
 #include <gsl/gsl>
 #include "art/Art.h"
 #include "art/Node4.h"
+#include <fmt/core.h>
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-
     auto test = Node4<void *>();
 
     test.find(std::byte(128));
+    fmt::print("Hello {}!", "world");
 
     return 0;
 }

@@ -15,6 +15,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 include(warnings)
 include(downloadGtest)
 include(downloadGSL)
+include(downloadFmt)
 
 add_executable(scratchbook main.cpp art/Art.h art/Node4.h art/Node16.h art/Node48.h)
 target_compile_options(scratchbook PRIVATE ${PEDANTIC_COMPILE_FLAGS})
@@ -22,3 +23,4 @@ target_compile_features(scratchbook PUBLIC cxx_std_17)
 set_property(TARGET scratchbook PROPERTY CXX_EXTENSIONS OFF)
 target_link_libraries(scratchbook GSL)
 target_link_libraries(scratchbook gtest)
+target_link_libraries(scratchbook fmt)
