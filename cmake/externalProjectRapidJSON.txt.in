@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 2.8.2)
+
+project(RapidJSON-download NONE)
+
+include(ExternalProject)
+ExternalProject_Add(GSL
+        GIT_REPOSITORY    https://github.com/Tencent/rapidjson.git
+        GIT_TAG           v1.1.0
+        SOURCE_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/external/RapidJSON"
+        BINARY_DIR        "${CMAKE_BINARY_DIR}/RapidJSON"
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND     ""
+        INSTALL_COMMAND   ""
+        TEST_COMMAND      ""
+        )
