@@ -1,16 +1,10 @@
 cmake_minimum_required(VERSION 3.12)
-
-# Set the default CMAKE_BUILD_TYPE to Release.
-# This should be done before the project command since the latter can set CMAKE_BUILD_TYPE itself.
-if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release CACHE STRING
-            "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel.")
-endif ()
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(utils)
+cmake_set_default_build_type()
 
 project(scratchbook)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-include(utils)
 include(downloadGtest)
 include(downloadGSL)
 include(downloadFmt)

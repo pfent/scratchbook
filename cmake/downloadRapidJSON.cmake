@@ -1,23 +1,4 @@
-# Download the latest RapidJSON from Github
-configure_file(
-        ${CMAKE_CURRENT_LIST_DIR}/externalProjectRapidJSON.txt.in
-        RapidJSON-download/CMakeLists.txt
-)
-
-# Configure and build the downloaded RapidJSON source
-execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-        RESULT_VARIABLE result
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/RapidJSON-download )
-if(result)
-    message(FATAL_ERROR "CMake step for RapidJSON failed: ${result}")
-endif()
-
-execute_process(COMMAND ${CMAKE_COMMAND} --build .
-        RESULT_VARIABLE result
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/RapidJSON-download)
-if(result)
-    message(FATAL_ERROR "Build step for RapidJSON failed: ${result}")
-endif()
+configure_and_build(RapidJSON)
 
 # RapidJSON tests clash with gtest / gmock
 set(RAPIDJSON_BUILD_TESTS OFF)

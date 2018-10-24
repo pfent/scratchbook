@@ -1,5 +1,20 @@
 include(warnings)
 
+# Set the default CMAKE_BUILD_TYPE (default to Release).
+# This should be done before the project command since the latter can set CMAKE_BUILD_TYPE itself.
+function(cmake_set_default_build_type)
+    if(ARGC GREATER 0)
+        set(buildtype ${ARGV1})
+    else()
+        set(buildtype Release)
+    endif()
+
+    if (NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE ${buildtype} CACHE STRING
+                "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel.")
+    endif ()
+endfunction(cmake_set_default_build_type)
+
 # add_executable with defaults for warnings and compile flags
 function(add_executable_with_warnings name)
     # ARGN refers to additional arguments after 'name'
@@ -41,3 +56,34 @@ function(build_directory dir)
         message(FATAL_ERROR "Build step for ${dir} failed: ${result}")
     endif ()
 endfunction(build_directory)
+
+# Capitalize the first letter of string and save the result in the out-var
+function(capitalize string result)
+    string(SUBSTRING ${string} 0 1 FIRST_LETTER)
+    string(TOUPPER ${FIRST_LETTER} FIRST_LETTER)
+    string(REGEX REPLACE "^.(.*)" "${FIRST_LETTER}\\1" string "${string}")
+
+    set(${result} ${string} PARENT_SCOPE)
+endfunction(capitalize)
+
+# Configure and build the specified dependency
+# This function assumes, there is a externalProject<Dependency>.txt.in file
+# initial functionality based on abseil's use of Gtest https://github.com/abseil/abseil-cpp
+function(configure_and_build dependency)
+    capitalize(${dependency} Dependency)
+
+    if (NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/externalProject${Dependency}.txt.in")
+        message(FATAL_ERROR "Could not find file: ${CMAKE_CURRENT_LIST_DIR}/externalProject${Dependency}.txt.in\n"
+                "Please specify the externalProject file to download the dependency's source")
+    endif ()
+
+    # Configure dependency from externalProject
+    configure_file(
+            ${CMAKE_CURRENT_LIST_DIR}/externalProject${Dependency}.txt.in
+            ${dependency}-download/CMakeLists.txt
+    )
+
+    # run cmake and build the downloaded source
+    cmake_generate_directory(${dependency}-download)
+    build_directory(${dependency}-download)
+endfunction(configure_and_build)
