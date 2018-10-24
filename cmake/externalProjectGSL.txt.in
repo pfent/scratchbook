@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.2)
 
 project(GSL-download NONE)
 
+# Download the latest GSL from Github
 include(ExternalProject)
 ExternalProject_Add(GSL
         GIT_REPOSITORY    https://github.com/Microsoft/GSL.git

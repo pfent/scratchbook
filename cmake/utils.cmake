@@ -15,9 +15,29 @@ endfunction(add_executable_with_warnings)
 # see: https://stackoverflow.com/a/52136398
 function(target_link_libraries_dont_warn target)
     set(libs ${ARGN})
-    foreach(lib ${libs})
+    foreach (lib ${libs})
         get_target_property(lib_include_dirs ${lib} INTERFACE_INCLUDE_DIRECTORIES)
         target_include_directories(${target} SYSTEM PRIVATE ${lib_include_dirs})
         target_link_libraries(${target} ${lib})
-    endforeach(lib)
+    endforeach (lib)
 endfunction(target_link_libraries_dont_warn)
+
+# Run cmake build generation on the target directory
+function(cmake_generate_directory dir)
+    execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+            RESULT_VARIABLE result
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${dir})
+    if (result)
+        message(FATAL_ERROR "CMake step for ${dir} failed: ${result}")
+    endif ()
+endfunction(cmake_generate_directory)
+
+# Run the configured build system for the target directory
+function(build_directory dir)
+    execute_process(COMMAND ${CMAKE_COMMAND} --build .
+            RESULT_VARIABLE result
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${dir})
+    if (result)
+        message(FATAL_ERROR "Build step for ${dir} failed: ${result}")
+    endif ()
+endfunction(build_directory)
