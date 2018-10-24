@@ -23,7 +23,7 @@ int main() {
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer, nullptr);
     d.Accept(writer);
 
-    fmt::print("{}", buffer.GetString());
+    fmt::print("{}\n", buffer.GetString());
 
     auto res = ranges::all_of(test, [](auto &a) noexcept { return a == nullptr; });
     assert(res);

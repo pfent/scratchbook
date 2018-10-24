@@ -7,6 +7,7 @@ cmake_set_default_build_type()
 project(scratchbook)
 
 include(utils)
+include(sanitizers)
 include(downloadGtest)
 include(downloadGSL)
 include(downloadFmt)

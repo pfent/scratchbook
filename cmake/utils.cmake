@@ -8,6 +8,14 @@ function(add_executable_with_warnings name)
     target_compile_options(${name} PRIVATE ${PEDANTIC_COMPILE_FLAGS})
     target_compile_features(${name} PUBLIC cxx_std_17)
     set_target_properties(${name} PROPERTIES CXX_EXTENSIONS OFF)
+
+    # sanitizers, if any
+    if (SANITIZE_COMPILE_FLAGS)
+        target_compile_options(${name} PRIVATE ${SANITIZE_COMPILE_FLAGS})
+        foreach (linkFlag ${SANITIZE_LINK_FLAGS})
+            target_link_libraries(${name} ${linkFlag})
+        endforeach (linkFlag)
+    endif ()
 endfunction(add_executable_with_warnings)
 
 # Tests for interprocedural optimization availability and enables it if possible

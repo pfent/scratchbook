@@ -1,6 +1,7 @@
 # From: https://github.com/fmtlib/fmt/blob/master/CMakeLists.txt
 # Popular compile warnings, depending on the compiler used
 
+include(CheckCXXCompilerFlag)
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     set(PEDANTIC_COMPILE_FLAGS -pedantic-errors -Wall -Wextra -pedantic # these are not discussable
             -Wold-style-cast
