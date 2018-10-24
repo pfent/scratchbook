@@ -10,6 +10,17 @@ function(add_executable_with_warnings name)
     set_target_properties(${name} PROPERTIES CXX_EXTENSIONS OFF)
 endfunction(add_executable_with_warnings)
 
+# Tests for interprocedural optimization availability and enables it if possible
+function(enable_lto_in_release target)
+    if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+        include(CheckIPOSupported)
+        check_ipo_supported(RESULT result)
+        if (result)
+            set_property(TARGET ${target} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+        endif ()
+    endif ()
+endfunction(enable_lto_in_release)
+
 # Aggressive warning settings can cause noisy warnings in dependency includes
 # This function silences those warnings by rewriting the include directories to be considered SYSTEM
 # see: https://stackoverflow.com/a/52136398

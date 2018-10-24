@@ -16,6 +16,7 @@ include(downloadGflags)
 include(downloadRange-v3)
 
 add_executable_with_warnings(scratchbook main.cpp art/Art.h art/Node4.h art/Node16.h art/Node48.h)
+enable_lto_in_release(scratchbook)
 target_link_libraries_dont_warn(scratchbook GSL)
 target_link_libraries_dont_warn(scratchbook gtest)
 target_link_libraries_dont_warn(scratchbook fmt)
