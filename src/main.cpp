@@ -9,6 +9,7 @@
 #include <rapidjson/writer.h>
 #include <range/v3/algorithm.hpp>
 #include <gtest/gtest.h>
+#include <cpr/cpr.h>
 
 int main() {
     auto test = Node4<void *>();
@@ -27,6 +28,10 @@ int main() {
 
     auto res = ranges::all_of(test, [](auto &a) noexcept { return a == nullptr; });
     assert(res);
+
+    auto r = cpr::Get(cpr::Url{"https://api.github.com/repos/whoshuu/cpr/contributors"},
+                      cpr::Authentication{"user", "pass"},
+                      cpr::Parameters{{"anon", "true"}, {"key", "value"}});
 
     return 0;
 }
