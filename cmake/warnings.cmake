@@ -8,7 +8,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
             -Wlogical-op
             -Wundef
             -Wredundant-decls
-            -Wshadow
+            -Wshadow=local
             -Wwrite-strings
             -Wpointer-arith
             -Wcast-qual
@@ -24,7 +24,6 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
             -Wno-dangling-else
             -Wno-format-nonliteral
             -Wno-sign-conversion
-            -Wno-shadow
             )
     if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.6)
         set(PEDANTIC_COMPILE_FLAGS ${PEDANTIC_COMPILE_FLAGS}
@@ -39,6 +38,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
                 -Wuseless-cast
                 -Wvector-operation-performance
                 -Wsized-deallocation
+                -Wodr
                 )
     endif ()
     if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0)
@@ -46,6 +46,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
                 -Wshift-overflow=2
                 -Wnull-dereference
                 -Wduplicated-cond
+                -Wduplicated-branches
                 )
     endif ()
 
