@@ -7,16 +7,29 @@
 #include <gtest/gtest.h>
 #include "util/lazy.h"
 #include "util/lambda.h"
+#include <type_safe/strong_typedef.hpp>
+
+struct MyInt : type_safe::strong_typedef<MyInt, int> {
+    using strong_typedef::strong_typedef;
+};
 
 auto foobar(const int &a) -> void {
     fmt::print("foobar {}\n", a);
+}
+
+auto takesInt(int a) {
+    fmt::print("took int: {}\n", a);
+}
+
+auto takesInt(MyInt a) {
+    fmt::print("took MyInt: {}\n", int(a));
 }
 
 int main() {
     auto test = Node4<void *>();
 
     test.find(std::byte(128));
-    fmt::print("Hello {}!", "world");
+    fmt::print("Hello {}!\n", "world");
 
     Lazy asdf2 = Lazy([]() noexcept {
         fmt::print("initialized {}\n", "asdf");
@@ -29,7 +42,13 @@ int main() {
 
     foobar(asdf2);
 
-    fmt::print("sizeof lazy: {}, sizeof raw: {}", sizeof(asdf2), sizeof(asdf2.get()));
+    fmt::print("sizeof lazy: {}, sizeof raw: {}\n", sizeof(asdf2), sizeof(asdf2.get()));
+
+
+    takesInt(42);
+
+    takesInt(MyInt(42));
+
     return 0;
 }
 
