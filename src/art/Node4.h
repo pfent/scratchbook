@@ -7,24 +7,34 @@
 
 template<typename Child>
 class Node4 {
+    static constexpr auto maxChilds = 4;
     uint8_t numChilds = 0;
     // TODO: Path compression in header?
-    std::array<std::byte, 4> keys = {};
-    std::array<Child, 4> childs = {};
+    std::array<std::byte, maxChilds> keys = {};
+    std::array<Child, maxChilds> childs = {};
 
 public:
+    using value_type = Child;
     using iterator = Child *;
     using const_iterator = Child const *;
 
-    auto begin() const noexcept -> Child const * {
+    auto begin() const noexcept -> const_iterator {
         return childs.begin();
     }
 
-    auto end() const noexcept -> Child const * {
+    auto begin() noexcept -> iterator {
+        return childs.begin();
+    }
+
+    auto end() const noexcept -> const_iterator {
         return &childs[numChilds];
     }
 
-    auto find(std::byte key) const -> Child const * {
+    auto end() noexcept -> iterator {
+        return &childs[numChilds];
+    }
+
+    auto find(std::byte key) const -> const_iterator {
         const auto endPtr = &keys[numChilds];
         auto resPtr = std::find(keys.begin(), endPtr, key);
         if (resPtr == endPtr) {
@@ -35,12 +45,16 @@ public:
         return &childs[idx];
     };
 
+    auto find(std::byte key) -> iterator {
+        return const_cast<Child *>(const_cast<const Node4 *>(this)->find(key));
+    };
+
     auto size() const -> size_t {
         return numChilds;
     }
 
     auto max_size() const -> size_t {
-        return 4;
+        return maxChilds;
     }
 
     auto insert(std::byte key, Child child) -> void {

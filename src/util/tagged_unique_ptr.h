@@ -8,7 +8,7 @@ namespace ext {
 template<typename T, size_t alignment = std::alignment_of_v<T>>
 class tagged_unique_ptr {
 public:
-    using pointer      = std::add_pointer_t<std::remove_reference_t<T>>;
+    using pointer       = std::add_pointer_t<std::remove_reference_t<T>>;
     using element_type  = T;
 private:
 
@@ -94,7 +94,7 @@ public:
         return std::move(*this);
     }
 
-    explicit operator bool() const noexcept { return not (get() == pointer()); }
+    explicit operator bool() const noexcept { return not(get() == pointer()); }
 
     pointer
     release() noexcept {

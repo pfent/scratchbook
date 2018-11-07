@@ -49,11 +49,10 @@ int main() {
 
     takesInt(MyInt(42));
 
+    auto artInsert = 42;
+    auto artInsertPtr = reinterpret_cast<std::byte *>(&artInsert);
+    auto art = Art<int>();
+    art.add(artInsertPtr, artInsertPtr + sizeof(artInsert), artInsert);
+
     return 0;
 }
-
-class Asdfes {
-    Lazy<int> asdf = Lazy([] {
-        return 42;
-    });
-};
