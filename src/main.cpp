@@ -8,6 +8,7 @@
 #include "util/lazy.h"
 #include "util/lambda.h"
 #include <type_safe/strong_typedef.hpp>
+#include "util/tagged_unique_ptr.h"
 
 struct MyInt : type_safe::strong_typedef<MyInt, int> {
     using strong_typedef::strong_typedef;
@@ -26,33 +27,20 @@ auto takesInt(MyInt a) {
 }
 
 int main() {
-    auto test = Node4<void *>();
-
-    test.find(std::byte(128));
-    fmt::print("Hello {}!\n", "world");
-
-    Lazy asdf2 = Lazy([]() noexcept {
-        fmt::print("initialized {}\n", "asdf");
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-        return 42;
-    });
-
-    fmt::print("Before initializing {}\n", "lazy");
-    fmt::print("The answer is {}\n", asdf2.get());
-
-    foobar(asdf2);
-
-    fmt::print("sizeof lazy: {}, sizeof raw: {}\n", sizeof(asdf2), sizeof(asdf2.get()));
-
-
-    takesInt(42);
-
-    takesInt(MyInt(42));
-
     auto artInsert = 42;
     auto artInsertPtr = reinterpret_cast<std::byte *>(&artInsert);
     auto art = Art<int>();
     art.add(artInsertPtr, artInsertPtr + sizeof(artInsert), artInsert);
+
+    auto tptr = ext::make_tagged_unique<int>(42).with_tag(1);
+    assert_that(tptr.get_tag() == 1);
+    tptr = ext::make_tagged_unique<char>('X').with_tag(2);
+    assert_that(tptr.get_tag() == 2);
+
+    auto other = std::move(tptr);
+    assert_that(other.get_tag() == 2);
+
+
 
     return 0;
 }
