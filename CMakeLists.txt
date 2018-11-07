@@ -28,6 +28,7 @@ add_executable_with_warnings(scratchbook src/main.cpp
         src/util/tagged_unique_ptr.h
         src/util/assert_that.h)
 enable_lto_in_release(scratchbook)
+target_include_directories(scratchbook PRIVATE src)
 target_link_libraries_dont_warn(scratchbook GSL)
 #target_link_libraries_dont_warn(scratchbook gtest)
 target_link_libraries_dont_warn(scratchbook fmt)
