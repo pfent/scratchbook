@@ -19,7 +19,7 @@ include(downloadBoost)
 #include(downloadCpr)
 include(downloadTypeSafe)
 
-add_executable_with_warnings(scratchbook src/main.cpp src/util/lazy.h src/art/Art.h src/art/Node4.h src/art/Node16.h src/art/Node48.h)
+add_executable_with_warnings(scratchbook src/main.cpp src/util/lazy.h src/art/Art.h src/art/Node4.h src/art/Node16.h src/art/Node48.h src/util/tagged_unique_ptr.h)
 enable_lto_in_release(scratchbook)
 target_link_libraries_dont_warn(scratchbook GSL)
 #target_link_libraries_dont_warn(scratchbook gtest)
