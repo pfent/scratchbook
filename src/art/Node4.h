@@ -8,8 +8,10 @@
 template<typename Child>
 class Node4 {
     static constexpr auto maxChilds = 4;
+    // header {
     uint8_t numChilds = 0;
     // TODO: Path compression in header?
+    // } // header
     std::array<std::byte, maxChilds> keys = {};
     std::array<Child, maxChilds> childs = {};
 
