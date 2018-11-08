@@ -1,8 +1,7 @@
 #pragma once
 
-#include <memory>
+#include <tuple>
 #include <type_traits>
-#include <fmt/core.h>
 #include "util/assert_that.h"
 
 namespace ext {
@@ -38,7 +37,6 @@ inline constexpr size_t index_of_v = index_of<Needle, std::tuple<Ts...>>::value;
 
 template<typename T>
 void delete_funtion(void *pointer) {
-    fmt::print("deleted an {}, through pointer {}\n", std::string(typeid(T).name()), pointer);
     delete (static_cast<T *>(pointer));
 }
 
@@ -118,7 +116,7 @@ public:
     }
 
     template<typename T>
-    bool is_pointer_to() {
+    bool points_to() {
         return index_of_v<T, Ts...> == get_tag();
     }
 
