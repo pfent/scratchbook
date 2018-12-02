@@ -9,8 +9,10 @@ template<typename Child>
 class Node48 {
     static constexpr auto invalidIndex = uint8_t(255);
     static constexpr auto maxChilds = 48;
+    // header {
     uint8_t numChilds = 0;
     // TODO: Path compression in header?
+    // } // header
     std::array<uint8_t, 256> childIndex = {};
     std::array<Child, maxChilds> childs = {};
 
@@ -40,7 +42,7 @@ public:
     }
 
     auto find(std::byte key) const -> const_iterator {
-        auto childIdx = childIndex[size_t(key)];
+        auto childIdx = childIndex[std::size_t(key)];
         if (childIdx == invalidIndex) {
             return end();
         }
@@ -48,18 +50,34 @@ public:
     }
 
     auto find(std::byte key) -> iterator {
-        return const_cast<Child *>(
-                const_cast<std::add_const_t<decltype(this)>>(this)->find(key)
-        );
+        return const_cast<Child *>(const_cast<const Node48 *>(this)->find(key));
     }
 
-    auto size() const -> size_t {
+    auto size() const -> std::size_t {
         return numChilds;
     }
 
-    auto max_size() const -> size_t {
+    auto max_size() const -> std::size_t {
         return maxChilds;
     }
+
+    auto insert(std::byte key, Child child) -> void {
+        if (size() >= max_size()) {
+            throw std::runtime_error("Node48 is already full!");
+        };
+        if (find(key) != end()) {
+            throw std::runtime_error("Duplicate key!");
+        }
+        insert_unsafe(key, std::move(child));
+    }
+
+    auto insert_unsafe(std::byte key, Child child) -> void {
+        auto position = numChilds;
+        childIndex[std::size_t(key)] = position;
+        childs[position] = std::move(child);
+
+        numChilds++;
+    };
 
 };
 

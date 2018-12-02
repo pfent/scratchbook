@@ -51,11 +51,11 @@ public:
         return const_cast<Child *>(const_cast<const Node4 *>(this)->find(key));
     };
 
-    auto size() const -> size_t {
+    auto size() const -> std::size_t {
         return numChilds;
     }
 
-    auto max_size() const -> size_t {
+    auto max_size() const -> std::size_t {
         return maxChilds;
     }
 
@@ -63,13 +63,23 @@ public:
         if (size() >= max_size()) {
             throw std::runtime_error("Node4 is already full!");
         };
+        if(find(key) != end()) {
+            throw std::runtime_error("Duplicate key!");
+        }
         insert_unsafe(key, std::move(child));
     }
 
-    // TODO: ensure sorted keys, so childs can be iterated in order
     auto insert_unsafe(std::byte key, Child child) -> void {
-        childs[numChilds] = std::move(child);
-        keys[numChilds] = key;
+        // find space
+        auto position = std::distance(keys.begin(), std::lower_bound(keys.begin(), keys.end(), key));
+
+        // make space
+        std::move(&keys[position], &keys[numChilds], &keys[position + 1]);
+        std::move(&childs[position], &childs[numChilds], &childs[position + 1]);
+
+        // insert into space
+        childs[position] = std::move(child);
+        keys[position] = key;
         ++numChilds;
     };
 };

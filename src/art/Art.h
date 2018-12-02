@@ -19,8 +19,9 @@ struct NodeImpl {
     using NextPtr = ext::tagged_unique_ptr<Inner, Leaf>;
 
     std::variant<
-            Node4<NextPtr>
-            //Node48<NextPtr>
+            Node4<NextPtr>,
+            Node16<NextPtr>,
+            Node48<NextPtr>
     > data;
 };
 
