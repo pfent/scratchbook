@@ -1,59 +1,78 @@
 #include <iostream>
 
-#include <gsl/gsl>
-#include "art/Art.h"
-#include "art/Node4.h"
-#include <fmt/core.h>
-#include <gtest/gtest.h>
-#include "util/lazy.h"
-#include "util/lambda.h"
-#include <type_safe/strong_typedef.hpp>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <strings.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <boost/iostreams/close.hpp>
 
-struct MyInt : type_safe::strong_typedef<MyInt, int> {
-    using strong_typedef::strong_typedef;
-};
+static constexpr size_t BUFFER_SIZE = 1024;
+static constexpr int RIGHTS = PROT_READ | PROT_WRITE;
+static constexpr int ANON = MAP_ANONYMOUS | MAP_PRIVATE;
+static constexpr int FIXED_SHARED = MAP_ANONYMOUS | MAP_PRIVATE;
 
-auto foobar(const int &a) -> void {
-    fmt::print("foobar {}\n", a);
+int fd = -1;
+
+void send_fd(int, int send_fd) { fd = send_fd; }
+
+int recv_fd(int) { return fd; }
+
+char* client_setup_shm(int server_connection) {
+   int fd = memfd_create("name", MFD_CLOEXEC | MFD_ALLOW_SEALING);
+   if (fd < 0) {
+      perror("memfd_create");
+      throw std::runtime_error("memfd_create failed");
+   }
+
+   if (ftruncate(fd, BUFFER_SIZE) < 0) {
+      perror("ftruncate");
+      throw std::runtime_error("ftruncate failed");
+   }
+   send_fd(server_connection, fd);
+
+   char* ptr = reinterpret_cast<char*>(mmap(nullptr, BUFFER_SIZE * 2, RIGHTS, ANON, -1, 0));
+   mmap(ptr, BUFFER_SIZE, RIGHTS, FIXED_SHARED, fd, 0);
+   mmap(&ptr[BUFFER_SIZE], BUFFER_SIZE, RIGHTS, FIXED_SHARED, fd, 0);
+
+   return ptr;
 }
 
-auto takesInt(int a) {
-    fmt::print("took int: {}\n", a);
+char* server_setup_shm(int client_connection) {
+   int fd = recv_fd(client_connection);
+   if (fcntl(fd, F_ADD_SEALS, F_SEAL_SHRINK) == -1) {
+      perror("fcntl");
+      throw std::runtime_error("fcntl failed");
+   }
+   // SHRINK_SEAL makes sure filesize is always >= BUFFER_SIZE
+   if (ftruncate(fd, BUFFER_SIZE) < 0) {
+      perror("ftruncate");
+      throw std::runtime_error("ftruncate failed");
+   }
+
+   char* ptr = reinterpret_cast<char*>(mmap(nullptr, BUFFER_SIZE * 2, RIGHTS, ANON, -1, 0));
+   mmap(ptr, BUFFER_SIZE, RIGHTS, FIXED_SHARED, fd, 0);
+   mmap(&ptr[BUFFER_SIZE], BUFFER_SIZE, RIGHTS, FIXED_SHARED, fd, 0);
+
+   return ptr;
 }
 
-auto takesInt(MyInt a) {
-    fmt::print("took MyInt: {}\n", int(a));
+int main(int, char**) {
+   auto clientbuffer = client_setup_shm(0);
+   auto serverbuffer = server_setup_shm(0);
+
+   std::fill(clientbuffer, &clientbuffer[BUFFER_SIZE], 'X');
+   if (not std::equal(serverbuffer, &serverbuffer[BUFFER_SIZE], serverbuffer)) {
+      throw std::runtime_error("clientbuffer != serverbuffer");
+   }
+
+   // maliciously try to shrink the underlying buffer
+   int res = ftruncate(fd, 0);
+   if (res == 0) {
+      throw std::runtime_error("ftruncate to 0 should not be allowed anymore!");
+   }
+   perror("ftruncate");
+
+   return 0;
 }
-
-int main() {
-    auto test = Node4<void *>();
-
-    test.find(std::byte(128));
-    fmt::print("Hello {}!\n", "world");
-
-    Lazy asdf2 = Lazy([]() noexcept {
-        fmt::print("initialized {}\n", "asdf");
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-        return 42;
-    });
-
-    fmt::print("Before initializing {}\n", "lazy");
-    fmt::print("The answer is {}\n", asdf2.get());
-
-    foobar(asdf2);
-
-    fmt::print("sizeof lazy: {}, sizeof raw: {}\n", sizeof(asdf2), sizeof(asdf2.get()));
-
-
-    takesInt(42);
-
-    takesInt(MyInt(42));
-
-    return 0;
-}
-
-class Asdfes {
-    Lazy<int> asdf = Lazy([] {
-        return 42;
-    });
-};
